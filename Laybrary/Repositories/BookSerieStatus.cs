@@ -1,4 +1,4 @@
-﻿using Laybrary.Models;
+using Laybrary.Models;
 using Laybrary.Useful;
 using System;
 using System.Collections.Generic;
@@ -39,11 +39,7 @@ namespace Laybrary.Repositories
                     db.BookSeriesStatus.Remove(model);
                     db.SaveChanges();
                 }
-            }
-            else
-            {
-                MessageBox.Show("Error when trying to delete book serie status. Call Denis to fix it!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            } 
         }
 
         private void AddNewBookSerieStatus(BookSeriesStatu bookSerieStatus)
