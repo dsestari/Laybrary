@@ -1,4 +1,4 @@
-﻿using Laybrary.Models;
+using Laybrary.Models;
 using Laybrary.Useful;
 using System;
 using System.Collections.Generic;
@@ -332,7 +332,7 @@ namespace Laybrary.Repositories
             catch (Exception ex)
             {
                 MessageBox.Show("Error when trying to get next book order :" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0;
+                return 1;
             }
         }
 
@@ -345,7 +345,7 @@ namespace Laybrary.Repositories
             catch (Exception ex)
             {
                 MessageBox.Show("Error when trying to get the next book queue " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0;
+                return 1;
             }
         }
     }
