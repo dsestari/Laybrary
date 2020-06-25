@@ -1,4 +1,4 @@
-﻿using Laybrary.Models;
+using Laybrary.Models;
 using Laybrary.Useful;
 using System;
 using System.Collections.Generic;
@@ -39,10 +39,6 @@ namespace Laybrary.Repositories
                     db.BookSources.Remove(model);
                     db.SaveChanges();
                 }
-            }
-            else
-            {
-                MessageBox.Show("Error when trying to delete book source. Call Denis to fix it!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }   
         }
 
