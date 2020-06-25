@@ -27,6 +27,33 @@ namespace Laybrary.Repositories
             }
         }
 
+        private int GetNextOnTheQueue()
+        {
+            using (Context db = new Context())
+            {
+                var lastOnTheQ = db.BookSeries.OrderByDescending(bs => bs.Queue).Select(bs => bs.Queue).First();
+
+                if (lastOnTheQ != null)
+                {
+                    return (int)lastOnTheQ + 1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+        private int GetBookSeriesId(string author, string seriesName)
+        {
+            return 0;
+        }
+        
+        private int GetTotalNumberOfBooksPerSeries(string author, string seriesName)
+        {
+            return 0;
+        }
+
         public int SuggestNextOrder()
         {
             try
@@ -36,7 +63,20 @@ namespace Laybrary.Repositories
             catch (Exception ex)
             {
                 MessageBox.Show("Error when trying to get next serie order :" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0;
+                return 1;
+            }
+        }
+
+        public int SuggestNextOnTheQueue()
+        {
+            try
+            {
+                return GetNextOnTheQueue();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error when trying to get next number on the queue, details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 1;
             }
         }
     }
