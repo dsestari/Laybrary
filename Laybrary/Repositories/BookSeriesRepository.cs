@@ -46,12 +46,215 @@ namespace Laybrary.Repositories
 
         private int GetBookSeriesId(string author, string seriesName)
         {
-            return 0;
+            using (Context db = new Context())
+            {
+                var Id = db.BookSeries.Where(bs => bs.Author == author && bs.Name == seriesName).Select(bs => bs.Id).First();
+
+                return Id;
+            }
         }
-        
+
         private int GetTotalNumberOfBooksPerSeries(string author, string seriesName)
         {
-            return 0;
+            var Id = GetBookSeriesId(author, seriesName);
+
+            if (Id != 0)
+            {
+                using (Context db = new Context())
+                {
+                    return db.Books.Where(bs => bs.Series_Id == Id).Count();
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private int GetTotalNumberOfBooksPerSeriesRead(string author, string seriesName)
+        {
+            var serieId = GetBookSeriesId(author, seriesName);
+
+            if (serieId != 0)
+            {
+                using (Context db = new Context())
+                {
+                    return db.Books.Join(db.ReadingHistories, b => b.Id, rh => rh.Book_Id, (b, rh) => new { Book = b, ReadingHistory = rh })
+                        .Where(bAndRh => bAndRh.Book.Id == bAndRh.ReadingHistory.Book_Id)
+                        .Where(x => x.Book.Series_Id == serieId).Count();
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private void UpdateBookSeries(BookSery bookSeries)
+        {
+            using (Context db = new Context())
+            {
+                if (bookSeries.Id == 0)
+                {
+                    db.BookSeries.Add(bookSeries);
+                }
+                else
+                {
+                    var model = db.BookSeries.Single(bs => bs.Id == bookSeries.Id);
+                    model.Name = bookSeries.Name;
+                    model.Author = bookSeries.Author;
+                    model.BookSeriesStatu = bookSeries.BookSeriesStatu;
+                    model.Queue = bookSeries.Queue;
+                    model.Registration_Order = bookSeries.Registration_Order;
+                    model.Total_Books = bookSeries.Total_Books;
+                    model.Total_Read = bookSeries.Total_Read;
+                    model.SerieStatus_Id = bookSeries.SerieStatus_Id;
+                }
+
+                db.SaveChanges();
+            }
+        }
+
+        private void DeleteBookSeries(int bookSeriesId)
+        {
+            using (Context db = new Context())
+            {
+                var bookSeriesInDb = db.BookSeries.Single(bs => bs.Id == bookSeriesId);
+
+                if (bookSeriesInDb != null)
+                {
+                    db.BookSeries.Remove(bookSeriesInDb);
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        private void Reorder(BookSery bookSeries)
+        {
+            if (bookSeries.Id == 0)
+            {
+                using (Context db = new Context())
+                {
+                    var booksSeriesToReorder = db.BookSeries.Where(bs => bs.Registration_Order >= bookSeries.Registration_Order).ToList();
+
+                    if (booksSeriesToReorder != null)
+                    {
+                        foreach (var item in booksSeriesToReorder)
+                        {
+                            item.Registration_Order = item.Registration_Order + 1;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (Context db = new Context())
+                {
+                    var booksSeriesToReorderAfterNewIndex = db.BookSeries.Where(bs => bs.Registration_Order >= bookSeries.Registration_Order).ToList();
+
+                    if (booksSeriesToReorderAfterNewIndex != null)
+                    {
+                        foreach (var item in booksSeriesToReorderAfterNewIndex)
+                        {
+                            item.Registration_Order = item.Registration_Order + 1;
+                            db.SaveChanges();
+                        }
+                    }
+
+                    var booksSeriesToReorderBeforeNewIndex = db.BookSeries.Where(bs => bs.Registration_Order < bookSeries.Registration_Order).ToList();
+
+                    if (booksSeriesToReorderBeforeNewIndex != null)
+                    {
+                        foreach (var item in booksSeriesToReorderBeforeNewIndex)
+                        {
+                            item.Registration_Order = item.Registration_Order - 1;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ReorderQueue(BookSery bookSeries)
+        {
+            if (bookSeries.Id == 0)
+            {
+                using (Context db = new Context())
+                {
+                    var booksSeriesToReorder = db.BookSeries.Where(bs => bs.Queue >= bookSeries.Queue).ToList();
+
+                    if (booksSeriesToReorder != null)
+                    {
+                        foreach (var item in booksSeriesToReorder)
+                        {
+                            item.Queue = item.Queue + 1;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (Context db = new Context())
+                {
+                    var booksSeriesToReorderAfterNewIndex = db.BookSeries.Where(bs => bs.Queue >= bookSeries.Queue).ToList();
+
+                    if (booksSeriesToReorderAfterNewIndex != null)
+                    {
+                        foreach (var item in booksSeriesToReorderAfterNewIndex)
+                        {
+                            item.Queue = item.Queue + 1;
+                            db.SaveChanges();
+                        }
+                    }
+
+                    var booksSeriesToReorderBeforeNewIndex = db.BookSeries.Where(b => b.Queue < bookSeries.Queue).ToList();
+
+                    if (booksSeriesToReorderBeforeNewIndex != null)
+                    {
+                        foreach (var item in booksSeriesToReorderBeforeNewIndex)
+                        {
+                            item.Queue = item.Queue - 1;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ReorderAfterDelete(BookSery bookSeries)
+        {
+            using (Context db = new Context())
+            {
+                var booksSeriesToReorder = db.BookSeries.Where(bs => bs.Registration_Order > bookSeries.Registration_Order).ToList();
+
+                if (booksSeriesToReorder != null)
+                {
+                    foreach (var item in booksSeriesToReorder)
+                    {
+                        item.Registration_Order = item.Registration_Order - 1;
+                        db.SaveChanges();
+                    }
+                }
+            }
+        }
+
+        private void ReorderQueueAfterDelete(BookSery bookSeries)
+        {
+            using (Context db = new Context())
+            {
+                var booksSeriesToReorder = db.BookSeries.Where(bs => bs.Queue > bookSeries.Queue).ToList();
+
+                if (booksSeriesToReorder != null)
+                {
+                    foreach (var item in booksSeriesToReorder)
+                    {
+                        item.Queue = item.Queue - 1;
+                        db.SaveChanges();
+                    }
+                }
+            }
         }
 
         public int SuggestNextOrder()
@@ -77,6 +280,113 @@ namespace Laybrary.Repositories
             {
                 MessageBox.Show("Error when trying to get next number on the queue, details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
+            }
+        }
+
+        public int LoadTotalBookSeriesTxt(string author, string seriesName)
+        {
+            if (!String.IsNullOrEmpty(author) && !String.IsNullOrEmpty(seriesName))
+            {
+                try
+                {
+                    return GetTotalNumberOfBooksPerSeries(author, seriesName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error when trying to get the total of book series, details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 0;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please the author and series name is required. ", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return 0;
+            }
+        }
+
+        public int LoadTotalBookSeriesReadTxt(string author, string seriesName)
+        {
+            if (!String.IsNullOrEmpty(author) && !String.IsNullOrEmpty(seriesName))
+            {
+                try
+                {
+                    return GetTotalNumberOfBooksPerSeriesRead(author, seriesName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error when trying to get the total of book series, details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 0;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please the author and series name is required. ", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return 0;
+            }
+        }
+
+        public void UpdateBookSeriesValidation(BookSery bookSeries)
+        {
+            if (String.IsNullOrEmpty(bookSeries.Name))
+            {
+                MessageBox.Show("The book series name is required. ", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            }
+            else if (String.IsNullOrEmpty(bookSeries.Author))
+            {
+
+                MessageBox.Show("The book series author is required. ", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                try
+                {
+                    var bookSeriesId = GetBookSeriesId(bookSeries.Author, bookSeries.Name);
+
+                    if (bookSeriesId != 0)
+                    {
+                        bookSeries.Id = bookSeriesId;
+                    }
+
+                    Reorder(bookSeries);
+                    ReorderQueue(bookSeries);
+
+                    UpdateBookSeries(bookSeries);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error when trying to add new book series. Details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        public void DeleteBookSeriesValidation(string author, string seriesName)
+        {
+            if (!String.IsNullOrEmpty(author) && !String.IsNullOrEmpty(seriesName))
+            {
+                var bookSeriesId = GetBookSeriesId(author, seriesName);
+
+                if (bookSeriesId == 0)
+                {
+                    MessageBox.Show("Please select at least one book series", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    try
+                    {
+                        //ReorderAfterDelete(book);
+                        //ReorderQueueAfterDelete(book);
+                        DeleteBookSeries(bookSeriesId);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ops! Error when trying to delete: " + ex.Message + " probably Denis forgot something :/ ", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("The book series author and title are required.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
