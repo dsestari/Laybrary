@@ -5,11 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Laybrary.Models;
 using System.Windows.Forms;
+using System.Data;
+using Laybrary.Useful;
 
 namespace Laybrary.Repositories
 {
     public class BookSeriesRepository
     {
+        private List<BookSery> GetAllSeries()
+        {
+            using (Context db = new Context())
+            {
+                return db.BookSeries.OrderBy(bs => bs.Queue).ToList();
+            }
+        }
+
+        private List<BookSery> SearchSeries(string _seriesName, string _author, int _seriesStatusId)
+        {
+            using (Context db = new Context())
+            {
+                return db.BookSeries.Where(bs => bs.SerieStatus_Id == _seriesStatusId && (
+                    bs.Name.Contains(_seriesName) ||
+                    bs.Author.Contains(_author))).OrderBy(bs => bs.Queue).ToList();
+            }
+        }
+
         private int GetNextOrder()
         {
             using (Context db = new Context())
@@ -255,6 +275,16 @@ namespace Laybrary.Repositories
                     }
                 }
             }
+        }
+
+        public DataTable LoadAllSeriesOnDataGrid()
+        {
+            return Helper.ToDataTable(GetAllSeries());
+        }
+
+        public DataTable SearchSeriesOnDataTable(string seriesName, string author, int seriesStatusId)
+        {
+            return Helper.ToDataTable(SearchSeries(seriesName, author, seriesStatusId));
         }
 
         public int SuggestNextOrder()
