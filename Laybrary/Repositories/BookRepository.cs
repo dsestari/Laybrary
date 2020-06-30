@@ -35,6 +35,14 @@ namespace Laybrary.Repositories
             }
         }
 
+        private Book GetBook(int bookId)
+        {
+            using (Context db = new Context())
+            {
+                return db.Books.Single(b => b.Id == bookId);
+            }
+        }
+
         private void UpdateBook(Book book)
         {
             using (Context db = new Context())
@@ -75,15 +83,7 @@ namespace Laybrary.Repositories
                 }
             }
         }
-
-        private Book GetBookId(string title, string author)
-        {
-            using (Context db = new Context())
-            {
-                return db.Books.SingleOrDefault(b => b.Title == title && b.Author == author);
-            }
-        }
-
+        
         private int GetBookNextOrder()
         {
             using (Context db = new Context())
@@ -269,18 +269,7 @@ namespace Laybrary.Repositories
             else
             {
                 try
-                {
-                    var bookId = GetBookId(book.Title, book.Author).Id;
-
-                    if (bookId != 0)
-                    {
-                        book.Id = bookId;
-                    }
-                    else
-                    {
-                        book.Id = 0;
-                    }
-
+                {                            
                     Reorder(book);
                     ReorderQueue(book);
 
@@ -300,11 +289,9 @@ namespace Laybrary.Repositories
             }
         }
 
-        public void DeleteBookValidation(string title, string author)
+        public void DeleteBookValidation(int bookId)
         {
-            var book = GetBookId(title, author);
-
-            if (book.Id == 0)
+            if (bookId == 0)
             {
                 MessageBox.Show("Please select at least one book", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -312,9 +299,11 @@ namespace Laybrary.Repositories
             {
                 try
                 {
+                    var book = GetBook(bookId);
+
                     ReorderAfterDelete(book);
                     ReorderQueueAfterDelete(book);
-                    DeleteBook(book.Id);
+                    DeleteBook(bookId);
                 }
                 catch (Exception ex)
                 {
