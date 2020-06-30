@@ -69,20 +69,6 @@ namespace Laybrary.Repositories
                 db.SaveChanges();
             }
         }
-
-        private void DeleteBook(int bookId)
-        {
-            using (Context db = new Context())
-            {
-                var bookInDb = db.Books.Single(b => b.Id == bookId);
-
-                if (bookInDb != null)
-                {
-                    db.Books.Remove(bookInDb);
-                    db.SaveChanges();
-                }
-            }
-        }
         
         private int GetBookNextOrder()
         {
@@ -212,40 +198,6 @@ namespace Laybrary.Repositories
             }
         }
 
-        private void ReorderAfterDelete(Book book)
-        {
-            using (Context db = new Context())
-            {
-                var booksToReorder = db.Books.Where(b => b.Registration_Order > book.Registration_Order).ToList();
-
-                if (booksToReorder != null)
-                {
-                    foreach (var item in booksToReorder)
-                    {
-                        item.Registration_Order = item.Registration_Order - 1;
-                        db.SaveChanges();
-                    }
-                }
-            }
-        }
-
-        private void ReorderQueueAfterDelete(Book book)
-        {
-            using (Context db = new Context())
-            {
-                var booksToReorder = db.Books.Where(b => b.Queue > book.Queue).ToList();
-
-                if (booksToReorder != null)
-                {
-                    foreach (var item in booksToReorder)
-                    {
-                        item.Queue = item.Queue - 1;
-                        db.SaveChanges();
-                    }
-                }
-            }
-        }
-
         public DataTable GetAllBooksOnDataTable()
         {
             return Helper.ToDataTable(GetAllBooks());
@@ -288,30 +240,7 @@ namespace Laybrary.Repositories
                 }
             }
         }
-
-        public void DeleteBookValidation(int bookId)
-        {
-            if (bookId == 0)
-            {
-                MessageBox.Show("Please select at least one book", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else
-            {
-                try
-                {
-                    var book = GetBook(bookId);
-
-                    ReorderAfterDelete(book);
-                    ReorderQueueAfterDelete(book);
-                    DeleteBook(bookId);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ops! Error when trying to delete: " + ex.Message + " probably Denis forgot something :/ ", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
+         
         public int SuggestNextOrder()
         {
             try
