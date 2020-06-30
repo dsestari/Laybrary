@@ -111,7 +111,8 @@ namespace Laybrary.Repositories
                         model.Publisher = bookCollection.Publisher;
                         model.Amount = bookCollection.Amount;
                         model.Local = bookCollection.Local;
-                        model.Purchase_Date = model.Purchase_Date;                        
+                        model.Purchase_Date = bookCollection.Purchase_Date;
+                        model.Book_Id = bookCollection.Book_Id;
                     }
                 }
 
@@ -173,9 +174,14 @@ namespace Laybrary.Repositories
                 {
                     bookCollection.Id = collectionId;
                 }
-                else
+
+                try
                 {
-                    
+                    UpdateCollection(bookCollection);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error when trying to update collection, details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
