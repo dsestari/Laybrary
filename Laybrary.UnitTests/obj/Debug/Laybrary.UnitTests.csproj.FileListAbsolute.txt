@@ -1,0 +1,17 @@
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\AppData\LaybraryDb.mdf
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\AppData\LaybraryDb_log.ldf
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Laybrary.UnitTests.dll
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Laybrary.UnitTests.pdb
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Laybrary.exe
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\EntityFramework.dll
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Laybrary.pdb
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\EntityFramework.xml
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\obj\Debug\Laybrary.UnitTests.csprojResolveAssemblyReference.cache
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\obj\Debug\Laybrary.UnitTests.dll
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\obj\Debug\Laybrary.UnitTests.pdb
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Moq.dll
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Moq.pdb
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Moq.xml
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Denis\Documents\Visual Studio 2013\Projects\Laybrary\Laybrary.UnitTests\bin\Debug\Laybrary.UnitTests.dll.config
