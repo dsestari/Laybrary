@@ -12,11 +12,21 @@ namespace Laybrary.Repositories
 {
     public class BookReadingHistoryRepository
     {
-        private List<ReadingHistory> GetBookHistory(int bookId)
+        private List<ReadingHistoryModel> GetBookHistory(int bookId)
         {
             using (Context db = new Context())
             {
-                return db.ReadingHistories.Where(h => h.Book_Id == bookId).OrderByDescending(h => h.Id).ToList();
+                List<ReadingHistoryModel> listModel = new List<ReadingHistoryModel>();
+                var model = db.ReadingHistories.Where(h => h.Book_Id == bookId).OrderByDescending(h => h.Id).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new ReadingHistoryModel { Id = item.Id,
+                                                            Book_Id = item.Book_Id,
+                                                            Start_Date = item.Start_Date,
+                                                            End_Date = item.End_Date });
+                }
+                return listModel;
             }
         }
 
