@@ -12,11 +12,18 @@ namespace Laybrary.Repositories
 {
     public class BookGenreRepository
     {
-        private List<BookGenre> GetAllGenres()
-        {
+        private List<BookGenreModel> GetAllGenres()
+        {            
             using (Context db = new Context())
             {
-                return db.BookGenres.OrderBy(g => g.Description).ToList();
+                List<BookGenreModel> listModel = new List<BookGenreModel>();
+                var model = db.BookGenres.OrderBy(g => g.Description).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookGenreModel { Id = item.Id, Description = item.Description});
+                }
+                return listModel;
             }
         }
 
