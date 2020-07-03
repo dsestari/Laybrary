@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -11,6 +11,28 @@ namespace Laybrary.Useful
 {
     public static class Helper
     {
+        public static bool CompareDataTables(DataTable sent, DataTable expeted)
+        {
+            if (sent == null || expeted == null)
+                return false;
+
+            if (sent.Columns.Count != expeted.Columns.Count)
+                return false;
+
+            if (sent.Columns.Cast<DataColumn>().Any(dc => !expeted.Columns.Contains(dc.ColumnName)))
+                return false;
+
+            for (int i = 0; i <= sent.Rows.Count - 1; i++)
+            {
+                if (sent.Columns.Cast<DataColumn>().Any(dc1 => sent.Rows[i][dc1.ColumnName].ToString() != expeted.Rows[i][dc1.ColumnName].ToString()))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static DataTable ToDataTable<T>(this IEnumerable<T> collection)
         {
             DataTable dt = new DataTable("DataTable");
@@ -72,6 +94,10 @@ namespace Laybrary.Useful
             catch (DeletedRowInaccessibleException ex)
             {
                 MessageBox.Show("Error when trying to edit DataTable (Row Inaccessible): " + ex.Message + " Please contact Denis.", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch(TargetInvocationException ex)
+            {
+                MessageBox.Show("Error to get property value from list..." + ex.Message + "Please contact Denis", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {
