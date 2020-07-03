@@ -13,18 +13,36 @@ namespace Laybrary.Repositories
 {
     public class BookCollectionRepository
     {
-        private List<BookCollection> GetCollection()
+        private List<BookCollectionModel> GetCollection()
         {
             using (Context db = new Context())
             {
-                return db.BookCollections.OrderBy(c => c.Registration_Order).ToList();
+                List<BookCollectionModel> listModel = new List<BookCollectionModel>();
+                var model = db.BookCollections.OrderBy(c => c.Registration_Order).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookCollectionModel { Id = item.Id,
+                                                            Name = item.Name,
+                                                            Registration_Order = item.Registration_Order,
+                                                            Author = item.Author,
+                                                            Number_of_Pages = item.Number_of_Pages,
+                                                            Publisher = item.Publisher,
+                                                            Amount = item.Amount,
+                                                            Local = item.Local,
+                                                            Purchase_Date = item.Purchase_Date,
+                                                            Book_Id = item.Book_Id });
+                }
+
+                return listModel;
             }
         }
 
-        private List<BookCollection> SearchCollection(string _name, string _author, int _numOfPages, string _publisher, bool _searchAmount, decimal _amount, string _local, DateTime _purchaseDate)
+        private List<BookCollectionModel> SearchCollection(string _name, string _author, int _numOfPages, string _publisher, bool _searchAmount, decimal _amount, string _local, DateTime _purchaseDate)
         {
             using (Context db = new Context())
-            {                
+            {
+                List<BookCollectionModel> listModel = new List<BookCollectionModel>();
                 var result = db.BookCollections;
 
                 if (!String.IsNullOrEmpty(_name))
@@ -61,8 +79,28 @@ namespace Laybrary.Repositories
                 {
                     result = (DbSet<BookCollection>)result.Where(c => c.Purchase_Date == _purchaseDate);
                 }
-                
-                return result.OrderBy(c => c.Registration_Order).ToList();
+
+
+                var model = result.OrderBy(c => c.Registration_Order).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookCollectionModel
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Registration_Order = item.Registration_Order,
+                        Author = item.Author,
+                        Number_of_Pages = item.Number_of_Pages,
+                        Publisher = item.Publisher,
+                        Amount = item.Amount,
+                        Local = item.Local,
+                        Purchase_Date = item.Purchase_Date,
+                        Book_Id = item.Book_Id
+                    });
+                }
+
+                return listModel;
             }
         }
 
