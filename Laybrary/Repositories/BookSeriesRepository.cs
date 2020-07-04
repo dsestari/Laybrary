@@ -12,21 +12,52 @@ namespace Laybrary.Repositories
 {
     public class BookSeriesRepository
     {
-        private List<BookSery> GetAllSeries()
+        private List<BookSeriesModel> GetAllSeries()
         {
             using (Context db = new Context())
             {
-                return db.BookSeries.OrderBy(bs => bs.Queue).ToList();
+                List<BookSeriesModel> listModel = new List<BookSeriesModel>();
+                var model = db.BookSeries.OrderBy(bs => bs.Queue).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookSeriesModel { Id = item.Id,
+                                                        Name = item.Name,
+                                                        Author = item.Author,
+                                                        Registration_Order = item.Registration_Order,
+                                                        Total_Books = item.Total_Books,
+                                                        Total_Read= item.Total_Read,
+                                                        Queue = item.Queue,
+                                                        SerieStatus_Id = item.SerieStatus_Id});
+                }
+                return listModel;
             }
         }
 
-        private List<BookSery> SearchSeries(string _seriesName, string _author, int _seriesStatusId)
+        private List<BookSeriesModel> SearchSeries(string _seriesName, string _author, int _seriesStatusId)
         {
             using (Context db = new Context())
             {
-                return db.BookSeries.Where(bs => bs.SerieStatus_Id == _seriesStatusId && (
+                List<BookSeriesModel> listModel = new List<BookSeriesModel>();
+                var model = db.BookSeries.Where(bs => bs.SerieStatus_Id == _seriesStatusId && (
                     bs.Name.Contains(_seriesName) ||
                     bs.Author.Contains(_author))).OrderBy(bs => bs.Queue).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookSeriesModel
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Author = item.Author,
+                        Registration_Order = item.Registration_Order,
+                        Total_Books = item.Total_Books,
+                        Total_Read = item.Total_Read,
+                        Queue = item.Queue,
+                        SerieStatus_Id = item.SerieStatus_Id
+                    });
+                }
+                return listModel;
             }
         }
 
