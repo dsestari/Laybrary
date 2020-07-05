@@ -12,11 +12,18 @@ namespace Laybrary.Repositories
 {
     public class BookSourceRepository
     {
-        private List<BookSource> GetAllSources()
+        private List<BookSourceModel> GetAllSources()
         {
             using (Context db = new Context())
             {
-                return db.BookSources.ToList();
+                List<BookSourceModel> listModel = new List<BookSourceModel>();
+                var model = db.BookSources.ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookSourceModel { Id = item.Id, Description = item.Description});
+                }
+                return listModel;
             }
         }
 
