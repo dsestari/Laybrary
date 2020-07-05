@@ -12,11 +12,18 @@ namespace Laybrary.Repositories
 {
     public class BookSerieStatus
     {
-        private List<BookSeriesStatu> GetAllSeriesStatus()
+        private List<BookSeriesStatusModel> GetAllSeriesStatus()
         {
             using (Context db = new Context())
             {
-                return db.BookSeriesStatus.ToList();
+                List<BookSeriesStatusModel> listModel = new List<BookSeriesStatusModel>();
+                var model = db.BookSeriesStatus.ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookSeriesStatusModel { Id = item.Id, Description = item.Description });
+                }
+                return listModel;
             }
         }
 
@@ -39,7 +46,7 @@ namespace Laybrary.Repositories
                     db.BookSeriesStatus.Remove(model);
                     db.SaveChanges();
                 }
-            } 
+            }
         }
 
         private void AddNewBookSerieStatus(BookSeriesStatu bookSerieStatus)
