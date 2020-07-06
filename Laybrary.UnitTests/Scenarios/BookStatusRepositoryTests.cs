@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Laybrary.UnitTests.LaybraryServices;
 using System.Collections.Generic;
 using System.Data;
 using Laybrary.Useful;
+using Laybrary.UnitTests.AppDataTest;
 
 namespace Laybrary.UnitTests.Scenarios
 {
@@ -63,5 +64,100 @@ namespace Laybrary.UnitTests.Scenarios
 
         //    Assert.IsTrue(Helper.CompareDataTables(sent, expected));
         //}
+
+        //[TestMethod]
+        //public void AddNewStatus_NewStatusIsEmpty_ReturnFalse()
+        //{
+        //    // Arrange
+        //    var service = new BookStatusService();
+
+        //    // Act
+        //    var model = new BookStatu();
+        //    model.Status = "";
+
+        //    var result = service.AddNewBookStatusValidation(model);
+
+        //    // Assert
+        //    Assert.IsFalse(result);
+        //}
+
+        //[TestMethod]
+        //public void AddNewStatus_NewStatusSentAlreadyExist_ReturnFalse()
+        //{
+        //    // Arrange
+        //    var service = new BookStatusService();
+
+        //    // Act
+        //    var model = new BookStatu();
+        //    model.Status = "TBR";
+
+        //    var result = service.AddNewBookStatusValidation(model);
+
+        //    // Assert
+        //    Assert.IsFalse(result);
+        //}
+
+        //[TestMethod]
+        //public void AddNewStatus_NewStatusToBeAdded_ReturnOneMoreToBeCount()
+        //{
+        //    // Arrange
+        //    var service = new BookStatusService();
+        //    var totalBeforeAdd = service.Count();
+
+        //    // Act
+        //    var model = new BookStatu();
+        //    model.Status = "Test";
+
+        //    var result = service.AddNewBookStatusValidation(model);
+        //    var totalAfterAdded = service.Count();
+        //    bool validation;
+                  
+        //    // Assert
+        //    if (result == true)
+        //    {
+        //        if (totalBeforeAdd < totalAfterAdded)
+        //        {
+        //            validation = true;
+        //        }
+        //        else
+        //        {
+        //            validation = false;
+        //        }
+
+        //    }
+        //    else
+        //    {
+        //        validation = false;
+        //    }
+
+        //    Assert.IsTrue(validation);
+        //}
+
+        //[TestMethod]
+        //public void DeleteStatus_StatusIsEmpty_ReturnFalse()
+        //{
+        //    // Arrange
+        //    var service = new BookStatusService();
+        //    var model = new BookStatu();
+        //    // Act
+        //    model.Status = "";
+        //    var result = service.DeleteBookStatusValidation(model.Status);
+        //    // Assert
+        //    Assert.IsFalse(result);
+        //}
+
+        [TestMethod]
+        public void DeleteStatus_StatusDoesNotExist_ReturnFalse()
+        {
+            // Arrange
+            var service = new BookStatusService();
+            var model = new BookStatu();
+            // Act
+            model.Status = "blablablabla";
+            var result = service.DeleteBookStatusValidation(model.Status);
+
+            //Assert
+            Assert.IsFalse(result);
+        }
     }
 }
