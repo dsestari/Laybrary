@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Laybrary.Repositories
 {
-    public class BookSerieStatus
+    public class BookSerieStatusRepository
     {
         private List<BookSeriesStatusModel> GetAllSeriesStatus()
         {
@@ -27,25 +27,40 @@ namespace Laybrary.Repositories
             }
         }
 
-        private BookSeriesStatu GetBookSerieStatus(string description)
+        private int GetBookSerieStatusId(string description)
         {
             using (Context db = new Context())
             {
-                return db.BookSeriesStatus.Where(bss => bss.Description == description).First();
+                var model = db.BookSeriesStatus.SingleOrDefault(bss => bss.Description == description);
+
+                if (model != null)
+                {
+                    return model.Id;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
-        private void DeleteBookSerieStatus(string description)
+        private bool DeleteBookSerieStatus(string description)
         {
-            var model = GetBookSerieStatus(description);
+            int Id = GetBookSerieStatusId(description);
 
-            if (model != null)
+            if (Id != 0)
             {
                 using (Context db = new Context())
                 {
+                    var model = db.BookSeriesStatus.SingleOrDefault(bss => bss.Id == Id);
                     db.BookSeriesStatus.Remove(model);
                     db.SaveChanges();
+                    return true;
                 }
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -93,7 +108,16 @@ namespace Laybrary.Repositories
             {
                 try
                 {
-                    DeleteBookSerieStatus(description);
+                    var result = DeleteBookSerieStatus(description);
+
+                    if (result != true)
+                    {
+                        MessageBox.Show("It was not possible to delete the series status. The status " + description + " not found.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Status deleted with success!");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -110,7 +134,7 @@ namespace Laybrary.Repositories
         {
             if (!String.IsNullOrEmpty(bookSerieStatus.Description))
             {
-                int exist = GetBookSerieStatus(bookSerieStatus.Description).Id;
+                int exist = GetBookSerieStatusId(bookSerieStatus.Description);
 
                 if (exist != 0)
                 {
