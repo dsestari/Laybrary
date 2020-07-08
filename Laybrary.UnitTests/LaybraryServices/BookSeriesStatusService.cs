@@ -1,4 +1,4 @@
-﻿using Laybrary.UnitTests.AppDataTest;
+using Laybrary.UnitTests.AppDataTest;
 using Laybrary.Useful;
 using System;
 using System.Collections.Generic;
@@ -23,6 +23,52 @@ namespace Laybrary.UnitTests.LaybraryServices
                     listModel.Add(new BookSeriesStatusModel { Id = item.Id, Description = item.Description });
                 }
                 return listModel;
+            }
+        }
+       
+        private int GetBookSerieStatusId(string description)
+        {
+            using (LaybraryTestContext db = new LaybraryTestContext())
+            {
+                var model = db.BookSeriesStatus.SingleOrDefault(bss => bss.Description == description);
+
+                if (model != null)
+                {
+                    return model.Id;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        private void AddNewBookSerieStatus(BookSeriesStatu bookSerieStatus)
+        {
+            using (LaybraryTestContext db = new LaybraryTestContext())
+            {
+                db.BookSeriesStatus.Add(bookSerieStatus);
+                db.SaveChanges();
+            }
+        }
+
+        private bool DeleteBookSerieStatus(string description)
+        {
+            int Id = GetBookSerieStatusId(description);
+
+            if (Id != 0)
+            {
+                using (LaybraryTestContext db = new LaybraryTestContext())
+                {
+                    var model = db.BookSeriesStatus.SingleOrDefault(bss => bss.Id == Id);
+                    db.BookSeriesStatus.Remove(model);
+                    db.SaveChanges();
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -53,6 +99,70 @@ namespace Laybrary.UnitTests.LaybraryServices
         public DataTable LoadGridSeriesStatus()
         {
             return Helper.ToDataTable(GetAllSeriesStatus());
+        }
+
+        public int Count()
+        {
+            return (int)GetAllSeriesStatus().Count();
+        }
+
+        public bool AddNewBookSerieStatusValidation(BookSeriesStatu bookSerieStatus)
+        {
+            if (!String.IsNullOrEmpty(bookSerieStatus.Description))
+            {
+                int exist = GetBookSerieStatusId(bookSerieStatus.Description);
+
+                if (exist != 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    try
+                    {
+                        AddNewBookSerieStatus(bookSerieStatus);
+
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteBookSerieStatusValidation(string description)
+        {
+            if (!String.IsNullOrEmpty(description))
+            {
+                try
+                {
+                    var result = DeleteBookSerieStatus(description);
+
+                    if (result != true)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
