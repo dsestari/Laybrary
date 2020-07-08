@@ -27,26 +27,41 @@ namespace Laybrary.Repositories
             }
         }
 
-        private BookSource GetBookSource(string description)
+        private int GetBookSourceId(string description)
         {
             using (Context db = new Context())
             {
-                return db.BookSources.Where(bs => bs.Description == description).First();
+                var model = db.BookSources.SingleOrDefault(bs => bs.Description == description);
+
+                if (model != null)
+                {
+                    return model.Id;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
-        private void DeleteBookSources(string description)
+        private bool DeleteBookSources(string description)
         { 
-            var model = GetBookSource(description);
+            int Id = GetBookSourceId(description);
 
-            if (model != null)
+            if (Id != 0)
             {
                 using (Context db = new Context())
                 {
+                    var model = db.BookSources.SingleOrDefault(bs => bs.Id == Id);
                     db.BookSources.Remove(model);
                     db.SaveChanges();
+                    return true;
                 }
-            }   
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void AddNewBookSources(BookSource bookSources)
@@ -91,7 +106,16 @@ namespace Laybrary.Repositories
             {
                 try
                 {
-                    DeleteBookSources(description);
+                    var result = DeleteBookSources(description);
+
+                    if (result != true)
+                    {
+                        MessageBox.Show("It was not possible to find the source " + description, "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Book source delete with success");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -108,7 +132,7 @@ namespace Laybrary.Repositories
         {
             if (!String.IsNullOrEmpty(bookSources.Description))
             {
-                int exist = GetBookSource(bookSources.Description).Id;
+                int exist = GetBookSourceId(bookSources.Description);
 
                 if (exist != 0)
                 {
