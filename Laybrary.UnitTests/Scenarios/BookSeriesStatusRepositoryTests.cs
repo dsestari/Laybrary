@@ -1,4 +1,5 @@
-﻿using Laybrary.UnitTests.LaybraryServices;
+using Laybrary.UnitTests.AppDataTest;
+using Laybrary.UnitTests.LaybraryServices;
 using Laybrary.Useful;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -13,31 +14,31 @@ namespace Laybrary.UnitTests.Scenarios
     [TestClass]
     public class BookSeriesStatusRepositoryTests
     {
-        //[TestMethod]
-        //public void LoadDropDownListSeriesStatus_GetAllStatusFromDb_ReturnStringList()
-        //{
-        //    // Arrange
-        //    var service = new BookSeriesStatusService();
-        //    var expected = new List<String>();
+        [TestMethod]
+        public void LoadDropDownListSeriesStatus_GetAllStatusFromDb_ReturnStringList()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var expected = new List<String>();
 
-        //    // Act
-        //    expected.Add("In Progress");
-        //    expected.Add("Awaiting Launch");
-        //    expected.Add("No Started");
-        //    expected.Add("Abandoned");
-        //    expected.Add("Concluded");
+            // Act
+            expected.Add("In Progress");
+            expected.Add("Awaiting Launch");
+            expected.Add("No Started");
+            expected.Add("Abandoned");
+            expected.Add("Concluded");
 
-        //    // Assert
-        //    var result = service.loadDropDownListSeriesStatus();
-        //    CollectionAssert.AreEqual(expected, result);
-        //}
+            // Assert
+            var result = service.loadDropDownListSeriesStatus();
+            CollectionAssert.AreEqual(expected, result);
+        }
 
         [TestMethod]
         public void LoadGridSeriesStatus_GetAllStatusFromDb_ReturnValidDataTable()
         {
             // Arrange
             var service = new BookSeriesStatusService();
-            var expected = new DataTable();            
+            var expected = new DataTable();
             // Act
             var sent = service.LoadGridSeriesStatus();
             expected.Clear();
@@ -68,9 +69,109 @@ namespace Laybrary.UnitTests.Scenarios
             row5["Id"] = 5;
             row5["Description"] = "Concluded";
             expected.Rows.Add(row5);
-            
+
             // Assert
             Assert.IsTrue(Helper.CompareDataTables(sent, expected));
+        }
+
+        [TestMethod]
+        public void AddNewSeriesStatus_StatusIsEmpty_ReturnFalse()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var model = new BookSeriesStatu();
+            // Act
+            model.Description = "";
+            var result = service.AddNewBookSerieStatusValidation(model);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void AddeNewSeriesStatus_StatusAlreadyExist_ReturnFalse()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var model = new BookSeriesStatu();
+            // Act
+            model.Description = "In Progress";
+            var result = service.AddNewBookSerieStatusValidation(model);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void AddNewSeriesStatus_NewStatusToBeAdded_ReturnTrue()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var totalBeforeAdd = service.Count();
+            var model = new BookSeriesStatu();
+
+            // Act
+            model.Description = "Test"; ;
+            var result = service.AddNewBookSerieStatusValidation(model);
+            var totalAfterAdded = service.Count();
+            bool validation;
+
+            // Assert
+            if (result == true)
+            {
+                if (totalBeforeAdd < totalAfterAdded)
+                {
+                    validation = true;
+                }
+                else
+                {
+                    validation = false;
+                }
+            }
+            else
+            {
+                validation = false;
+            }
+
+            Assert.IsTrue(validation);
+        }
+
+        [TestMethod]
+        public void DeleteSeriesStatus_StatusIsEmpty_ReturnFalse()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var model = new BookSeriesStatu();
+
+            // Act
+            model.Description = "";
+            var result = service.DeleteBookSerieStatusValidation(model.Description);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void DeleteSeriesStatus_StatusDoesNotExist_ReturnFalse()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var model = new BookSeriesStatu();
+            // Act
+            model.Description = "blablabla";
+            var result = service.DeleteBookSerieStatusValidation(model.Description);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void DeleteSeriesStatus_StatusExist_ReturnTrue()
+        {
+            // Arrange
+            var service = new BookSeriesStatusService();
+            var model = new BookSeriesStatu();
+            // Act
+            model.Description = "Test";
+            var result = service.DeleteBookSerieStatusValidation(model.Description);
+            // Assert
+            Assert.IsTrue(result);
         }
     }
 }
