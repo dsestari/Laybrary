@@ -27,25 +27,40 @@ namespace Laybrary.Repositories
             }
         }
 
-        private BookGenre GetBookGenre(string description)
+        private int GetBookGenreId(string description)
         {
             using (Context db = new Context())
             {
-                return db.BookGenres.Where(g => g.Description == description).First();
+                var model = db.BookGenres.SingleOrDefault(g => g.Description == description);
+
+                if (model != null)
+                {
+                    return model.Id;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
-        private void DeleteBookGenre(string description)
+        private bool DeleteBookGenre(string description)
         {
-            var model = GetBookGenre(description);
+            int Id = GetBookGenreId(description);
 
-            if (model != null)
+            if (Id != 0)
             {
                 using (Context db = new Context())
                 {
+                    var model = db.BookGenres.SingleOrDefault(g => g.Id == Id);
                     db.BookGenres.Remove(model);
                     db.SaveChanges();
+                    return true;
                 }
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -85,7 +100,16 @@ namespace Laybrary.Repositories
             {
                 try
                 {
-                    DeleteBookGenre(description);
+                    var result = DeleteBookGenre(description);
+
+                    if (result != true)
+                    {
+                        MessageBox.Show("It was not possible to find the book genre "+ description, "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Genre deleted with success");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -102,7 +126,7 @@ namespace Laybrary.Repositories
         {
             if (!String.IsNullOrEmpty(bookGenre.Description))
             {
-                int exist = GetBookGenre(bookGenre.Description).Id;
+                int exist = GetBookGenreId(bookGenre.Description);
 
                 if (exist != 0)
                 {
