@@ -12,19 +12,38 @@ namespace Laybrary.Repositories
 {
     public class BookRepository
     {
-        private List<Book> GetAllBooks()
+        private List<BookModel> GetAllBooks()
         {
             using (Context db = new Context())
             {
-                return db.Books.OrderBy(b => b.Queue).ToList();
+                List<BookModel> listModel = new List<BookModel>();
+                var model = db.Books.OrderBy(b => b.Queue).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookModel { Id = item.Id,
+                                                  Title = item.Title,
+                                                  Author = item.Author,
+                                                  Registration_Date = item.Registration_Date,
+                                                  Translation = item.Translation,
+                                                  Note = item.Note,
+                                                  Registration_Order = item.Registration_Order,
+                                                  Queue = item.Queue,
+                                                  Series_Id = item.Series_Id,
+                                                  Status_Id = item.Status_Id,
+                                                  Genre_Id = item.Genre_Id,
+                                                  Source_Id = item.Source_Id});
+                }
+                return listModel;
             }
         }
 
-        private List<Book> SearchBooks(string _title, string _author, DateTime _registrationDate, string _translation, string _note, int _statusId, int _genreId, int _sourceId)
+        private List<BookModel> SearchBooks(string _title, string _author, DateTime _registrationDate, string _translation, string _note, int _statusId, int _genreId, int _sourceId)
         {
             using (Context db = new Context())
             {
-                return db.Books.Where(b => b.Status_Id == _statusId && (
+                List<BookModel> listModel = new List<BookModel>();
+                var model = db.Books.Where(b => b.Status_Id == _statusId && (
                                       b.Author.Contains(_author) ||
                                       b.Registration_Date == _registrationDate.Date ||
                                       b.Translation == _translation ||
@@ -32,17 +51,26 @@ namespace Laybrary.Repositories
                                       b.Title.Contains(_title) ||
                                       b.Genre_Id == _genreId ||
                                       b.Source_Id == _sourceId)).OrderBy(b => b.Queue).ToList();
+
+                foreach (var item in model)
+                {
+                    listModel.Add(new BookModel { Id = item.Id,
+                                                  Title = item.Title,
+                                                  Author = item.Author,
+                                                  Registration_Date = item.Registration_Date,
+                                                  Translation = item.Translation,
+                                                  Note = item.Note,
+                                                  Registration_Order = item.Registration_Order,
+                                                  Queue = item.Queue,
+                                                  Series_Id = item.Series_Id,
+                                                  Status_Id = item.Status_Id,
+                                                  Genre_Id = item.Genre_Id,
+                                                  Source_Id = item.Source_Id});
+                }
+                return listModel;
             }
         }
-
-        private Book GetBook(int bookId)
-        {
-            using (Context db = new Context())
-            {
-                return db.Books.Single(b => b.Id == bookId);
-            }
-        }
-
+          
         private void UpdateBook(Book book)
         {
             using (Context db = new Context())
