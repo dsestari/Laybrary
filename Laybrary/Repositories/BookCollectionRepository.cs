@@ -43,43 +43,42 @@ namespace Laybrary.Repositories
             using (Context db = new Context())
             {
                 List<BookCollectionModel> listModel = new List<BookCollectionModel>();
-                var result = db.BookCollections;
+                IQueryable<BookCollection> result = db.BookCollections;
 
                 if (!String.IsNullOrEmpty(_name))
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Name.Contains(_name));
+                    result = result.Where(c => c.Name.Contains(_name));
                 }
 
                 if (!String.IsNullOrEmpty(_author))
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Author.Contains(_author));
+                    result = result.Where(c => c.Author.Contains(_author));
                 }
 
                 if (_numOfPages != 0)
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Number_of_Pages == _numOfPages);
+                    result = result.Where(c => c.Number_of_Pages == _numOfPages);
                 } 
 
                 if (!String.IsNullOrEmpty(_publisher))
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Publisher.Contains(_publisher));
+                    result = result.Where(c => c.Publisher.Contains(_publisher));
                 }
 
                 if (_searchAmount == true)
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Amount == _amount);
+                    result = result.Where(c => c.Amount == _amount);
                 }
 
                 if (!String.IsNullOrEmpty(_local))
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Local.Contains(_local));
+                    result = result.Where(c => c.Local.Contains(_local));
                 }
 
                 if (_purchaseDate != null)
                 {
-                    result = (DbSet<BookCollection>)result.Where(c => c.Purchase_Date == _purchaseDate);
+                    result = result.Where(c => c.Purchase_Date == _purchaseDate);
                 }
-
 
                 var model = result.OrderBy(c => c.Registration_Order).ToList();
 
