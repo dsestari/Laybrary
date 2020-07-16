@@ -3,6 +3,7 @@ using Laybrary.Useful;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,15 +44,50 @@ namespace Laybrary.Repositories
             using (Context db = new Context())
             {
                 List<BookModel> listModel = new List<BookModel>();
-                var model = db.Books.Where(b => b.Status_Id == _statusId && (
-                                      b.Author.Contains(_author) ||
-                                      b.Registration_Date == _registrationDate.Date ||
-                                      b.Translation == _translation ||
-                                      b.Note.Contains(_note) ||
-                                      b.Title.Contains(_title) ||
-                                      b.Genre_Id == _genreId ||
-                                      b.Source_Id == _sourceId)).OrderBy(b => b.Queue).ToList();
+                var result = db.Books;
 
+                if (!String.IsNullOrEmpty(_title))
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Title.Contains(_title));
+                }
+
+                if (!String.IsNullOrEmpty(_author))
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Author.Contains(_author));
+                }
+
+                if (_registrationDate != null)
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Registration_Date == _registrationDate);
+                }
+
+                if (!String.IsNullOrEmpty(_translation))
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Translation.Contains(_translation));
+                }
+
+                if (!String.IsNullOrEmpty(_note))
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Note.Contains(_note));
+                }
+
+                if (_statusId != 0)
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Status_Id == _statusId);
+                }
+
+                if (_genreId != 0)
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Genre_Id == _genreId);
+                }
+
+                if (_sourceId != 0)
+                {
+                    result = (DbSet<Book>)result.Where(b => b.Source_Id == _sourceId);
+                }
+
+                var model = result.OrderBy(b => b.Registration_Order).ToList();
+                
                 foreach (var item in model)
                 {
                     listModel.Add(new BookModel { Id = item.Id,
@@ -246,10 +282,22 @@ namespace Laybrary.Repositories
             {
                 MessageBox.Show("The Author is required.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            else if(book.Genre_Id == 0)
+            {
+                MessageBox.Show("Please select the book genre.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (book.Status_Id == 0)
+            {
+                MessageBox.Show("Please select the book status.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (book.Source_Id == 0)
+            {
+                MessageBox.Show("Please select the book source.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             else
             {
                 try
-                {                            
+                {                   
                     Reorder(book);
                     ReorderQueue(book);
 
