@@ -1,8 +1,9 @@
-﻿using Laybrary.UnitTests.AppDataTest;
+using Laybrary.UnitTests.AppDataTest;
 using Laybrary.Useful;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,14 +46,49 @@ namespace Laybrary.UnitTests.LaybraryServices
             using (LaybraryTestContext db = new LaybraryTestContext())
             {
                 List<BookModel> listModel = new List<BookModel>();
-                var model = db.Books.Where(b => b.Status_Id == _statusId && (
-                                      b.Author.Contains(_author) ||
-                                      b.Registration_Date == _registrationDate.Date ||
-                                      b.Translation == _translation ||
-                                      b.Note.Contains(_note) ||
-                                      b.Title.Contains(_title) ||
-                                      b.Genre_Id == _genreId ||
-                                      b.Source_Id == _sourceId)).OrderBy(b => b.Queue).ToList();
+                IQueryable<Book> result = db.Books;
+
+                if (!String.IsNullOrEmpty(_title))
+                {
+                    result = result.Where(b => b.Title.Contains(_title));
+                }
+
+                if (!String.IsNullOrEmpty(_author))
+                {
+                    result = result.Where(b => b.Author.Contains(_author));
+                }
+
+                if (_registrationDate != null)
+                {
+                    result = result.Where(b => b.Registration_Date == _registrationDate);
+                }
+
+                if (!String.IsNullOrEmpty(_translation))
+                {
+                    result = result.Where(b => b.Translation.Contains(_translation));
+                }
+
+                if (!String.IsNullOrEmpty(_note))
+                {
+                    result = result.Where(b => b.Note.Contains(_note));
+                }
+
+                if (_statusId != 0)
+                {
+                    result = result.Where(b => b.Status_Id == _statusId);
+                }
+
+                if (_genreId != 0)
+                {
+                    result = result.Where(b => b.Genre_Id == _genreId);
+                }
+
+                if (_sourceId != 0)
+                {
+                    result = result.Where(b => b.Source_Id == _sourceId);
+                }
+
+                var model = result.OrderBy(b => b.Registration_Order).ToList();
 
                 foreach (var item in model)
                 {
