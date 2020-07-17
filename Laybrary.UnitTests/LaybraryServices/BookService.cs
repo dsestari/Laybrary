@@ -41,7 +41,7 @@ namespace Laybrary.UnitTests.LaybraryServices
             }
         }
 
-        private List<BookModel> SearchBooks(string _title, string _author, DateTime _registrationDate, string _translation, string _note, int _statusId, int _genreId, int _sourceId)
+        private List<BookModel> SearchBooks(string _title, string _author, DateTime? _registrationDate, string _translation, string _note, int _statusId, int _genreId, int _sourceId)
         {
             using (LaybraryTestContext db = new LaybraryTestContext())
             {
@@ -123,16 +123,95 @@ namespace Laybrary.UnitTests.LaybraryServices
                 else
                 {
                     var bookInDb = db.Books.Single(b => b.Id == book.Id);
-                    bookInDb.Title = book.Title;
-                    bookInDb.Author = book.Author;
-                    bookInDb.Registration_Date = DateTime.Now.Date;
-                    bookInDb.Translation = book.Translation;
-                    bookInDb.Note = book.Note;
-                    bookInDb.Registration_Order = book.Registration_Order;
-                    bookInDb.Queue = book.Queue;
-                    bookInDb.Series_Id = book.Series_Id;
-                    bookInDb.Status_Id = book.Status_Id;
-                    bookInDb.Source_Id = book.Source_Id;
+                    if (!String.IsNullOrEmpty(book.Title))
+                    {
+                         bookInDb.Title = book.Title;
+                    }
+                    else
+                    {
+                        book.Title = bookInDb.Title;
+                    }
+
+                    if (!String.IsNullOrEmpty(book.Author))
+                    {
+                        bookInDb.Author = book.Author;
+                    }
+                    else
+                    {
+                        book.Author = bookInDb.Author;
+                    }
+
+                    if (book.Registration_Date != null)
+                    {
+                        bookInDb.Registration_Date = book.Registration_Date;
+                    }
+                    else
+                    {
+                        book.Registration_Date = bookInDb.Registration_Date;
+                    }
+
+                    if (!String.IsNullOrEmpty(book.Translation))
+                    {
+                        bookInDb.Translation = book.Translation;
+                    }
+                    else
+                    {
+                        book.Translation = bookInDb.Translation;
+                    }
+
+                    if (!String.IsNullOrEmpty(book.Note))
+                    {
+                        bookInDb.Note = book.Note;
+                    }
+                    else
+                    {
+                        book.Note = bookInDb.Note;
+                    }
+
+                    if (book.Registration_Order != null)
+                    {
+                        bookInDb.Registration_Order = book.Registration_Order;
+                    }
+                    else
+                    {
+                        book.Registration_Order = bookInDb.Registration_Order;
+                    }
+
+                    if (book.Queue != null)
+                    {
+                        bookInDb.Queue = book.Queue;
+                    }
+                    else
+                    {
+                        book.Queue = bookInDb.Queue;
+                    }
+
+                    if (book.Series_Id != null)
+                    {
+                         bookInDb.Series_Id = book.Series_Id;
+                    }
+                    else
+                    {
+                        book.Series_Id = bookInDb.Series_Id;
+                    }
+
+                    if (book.Status_Id != null)
+                    {
+                        bookInDb.Status_Id = book.Status_Id;
+                    }
+                    else
+                    {
+                        book.Status_Id = bookInDb.Status_Id;
+                    }
+
+                    if (book.Source_Id != null)
+                    {
+                        bookInDb.Source_Id = book.Source_Id;
+                    }
+                    else
+                    {
+                        book.Source_Id = bookInDb.Source_Id;
+                    }                    
                 }
 
                 db.SaveChanges();
@@ -272,7 +351,7 @@ namespace Laybrary.UnitTests.LaybraryServices
             return Helper.ToDataTable(GetAllBooks());
         }
 
-        public DataTable SearchBooksOnDataTable(string title, string author, DateTime registrationDate, string translation, string note, int statusId, int genreId, int sourceId)
+        public DataTable SearchBooksOnDataTable(string title, string author, DateTime? registrationDate, string translation, string note, int statusId, int genreId, int sourceId)
         {
             return Helper.ToDataTable(SearchBooks(title, author, registrationDate, translation, note, statusId, genreId, sourceId));
         }
