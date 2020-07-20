@@ -60,7 +60,10 @@ namespace Laybrary.UnitTests.LaybraryServices
 
                 if (_registrationDate != null)
                 {
-                    result = result.Where(b => b.Registration_Date == _registrationDate);
+                    result = result.Where(b => b.Registration_Date.HasValue == true && _registrationDate.HasValue == true 
+                        && b.Registration_Date.Value.Day == _registrationDate.Value.Day
+                        && b.Registration_Date.Value.Month == _registrationDate.Value.Month
+                        && b.Registration_Date.Value.Year == _registrationDate.Value.Year);
                 }
 
                 if (!String.IsNullOrEmpty(_translation))
