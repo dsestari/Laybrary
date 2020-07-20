@@ -39,69 +39,75 @@ namespace Laybrary.Repositories
             }
         }
 
-        private List<BookModel> SearchBooks(string _title, string _author, DateTime _registrationDate, string _translation, string _note, int _statusId, int _genreId, int _sourceId)
+        private List<BookModel> SearchBooks(string _title, string _author, DateTime? _registrationDate, string _translation, string _note, int _statusId, int _genreId, int _sourceId)
         {
             using (Context db = new Context())
             {
                 List<BookModel> listModel = new List<BookModel>();
-                var result = db.Books;
+                IQueryable<Book> result = db.Books;
 
                 if (!String.IsNullOrEmpty(_title))
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Title.Contains(_title));
+                    result = result.Where(b => b.Title.Contains(_title));
                 }
 
                 if (!String.IsNullOrEmpty(_author))
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Author.Contains(_author));
+                    result = result.Where(b => b.Author.Contains(_author));
                 }
 
                 if (_registrationDate != null)
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Registration_Date == _registrationDate);
+                    result = result.Where(b => b.Registration_Date.HasValue == true && _registrationDate.HasValue == true
+                        && b.Registration_Date.Value.Day == _registrationDate.Value.Day
+                        && b.Registration_Date.Value.Month == _registrationDate.Value.Month
+                        && b.Registration_Date.Value.Year == _registrationDate.Value.Year);
                 }
 
                 if (!String.IsNullOrEmpty(_translation))
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Translation.Contains(_translation));
+                    result = result.Where(b => b.Translation.Contains(_translation));
                 }
 
                 if (!String.IsNullOrEmpty(_note))
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Note.Contains(_note));
+                    result = result.Where(b => b.Note.Contains(_note));
                 }
 
                 if (_statusId != 0)
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Status_Id == _statusId);
+                    result = result.Where(b => b.Status_Id == _statusId);
                 }
 
                 if (_genreId != 0)
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Genre_Id == _genreId);
+                    result = result.Where(b => b.Genre_Id == _genreId);
                 }
 
                 if (_sourceId != 0)
                 {
-                    result = (DbSet<Book>)result.Where(b => b.Source_Id == _sourceId);
+                    result = result.Where(b => b.Source_Id == _sourceId);
                 }
 
                 var model = result.OrderBy(b => b.Registration_Order).ToList();
-                
+
                 foreach (var item in model)
                 {
-                    listModel.Add(new BookModel { Id = item.Id,
-                                                  Title = item.Title,
-                                                  Author = item.Author,
-                                                  Registration_Date = item.Registration_Date,
-                                                  Translation = item.Translation,
-                                                  Note = item.Note,
-                                                  Registration_Order = item.Registration_Order,
-                                                  Queue = item.Queue,
-                                                  Series_Id = item.Series_Id,
-                                                  Status_Id = item.Status_Id,
-                                                  Genre_Id = item.Genre_Id,
-                                                  Source_Id = item.Source_Id});
+                    listModel.Add(new BookModel
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                        Author = item.Author,
+                        Registration_Date = item.Registration_Date,
+                        Translation = item.Translation,
+                        Note = item.Note,
+                        Registration_Order = item.Registration_Order,
+                        Queue = item.Queue,
+                        Series_Id = item.Series_Id,
+                        Status_Id = item.Status_Id,
+                        Genre_Id = item.Genre_Id,
+                        Source_Id = item.Source_Id
+                    });
                 }
                 return listModel;
             }
@@ -346,7 +352,7 @@ namespace Laybrary.Repositories
             return Helper.ToDataTable(GetAllBooks());
         }
 
-        public DataTable SearchBooksOnDataTable(string title, string author, DateTime registrationDate, string translation, string note, int statusId, int genreId, int sourceId)
+        public DataTable SearchBooksOnDataTable(string title, string author, DateTime? registrationDate, string translation, string note, int statusId, int genreId, int sourceId)
         {
             return Helper.ToDataTable(SearchBooks(title, author, registrationDate, translation, note, statusId, genreId, sourceId));
         }
