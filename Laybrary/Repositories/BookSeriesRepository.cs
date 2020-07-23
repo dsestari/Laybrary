@@ -39,9 +39,24 @@ namespace Laybrary.Repositories
             using (Context db = new Context())
             {
                 List<BookSeriesModel> listModel = new List<BookSeriesModel>();
-                var model = db.BookSeries.Where(bs => bs.SerieStatus_Id == _seriesStatusId && (
-                    bs.Name.Contains(_seriesName) ||
-                    bs.Author.Contains(_author))).OrderBy(bs => bs.Queue).ToList();
+                IQueryable<BookSery> result = db.BookSeries;
+
+                if (!String.IsNullOrEmpty(_seriesName))
+                {
+                    result = result.Where(bs => bs.Name.Contains(_seriesName));
+                }
+
+                if (!String.IsNullOrEmpty(_author))
+                {
+                    result = result.Where(bs => bs.Author.Contains(_author));
+                }
+
+                if (_seriesStatusId != 0)
+                {
+                    result = result.Where(bs => bs.SerieStatus_Id == _seriesStatusId);
+                }
+
+                var model = result.OrderBy(bs => bs.Queue).ToList();
 
                 foreach (var item in model)
                 {
@@ -164,21 +179,7 @@ namespace Laybrary.Repositories
 
                 db.SaveChanges();
             }
-        }
-
-        private void DeleteBookSeries(int bookSeriesId)
-        {
-            using (Context db = new Context())
-            {
-                var bookSeriesInDb = db.BookSeries.Single(bs => bs.Id == bookSeriesId);
-
-                if (bookSeriesInDb != null)
-                {
-                    db.BookSeries.Remove(bookSeriesInDb);
-                    db.SaveChanges();
-                }
-            }
-        }
+        }           
 
         private void Reorder(BookSery bookSeries)
         {
@@ -419,36 +420,6 @@ namespace Laybrary.Repositories
                     MessageBox.Show("Error when trying to add new book series. Details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-        }
-
-        public void DeleteBookSeriesValidation(string author, string seriesName)
-        {
-            if (!String.IsNullOrEmpty(author) && !String.IsNullOrEmpty(seriesName))
-            {
-                var bookSeriesId = GetBookSeriesId(author, seriesName);
-
-                if (bookSeriesId == 0)
-                {
-                    MessageBox.Show("Please select at least one book series", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
-                {
-                    try
-                    {
-                        //ReorderAfterDelete(book);
-                        //ReorderQueueAfterDelete(book);
-                        DeleteBookSeries(bookSeriesId);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ops! Error when trying to delete: " + ex.Message + " probably Denis forgot something :/ ", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("The book series author and title are required.", "Attention", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
+        }       
     }
 }
